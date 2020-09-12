@@ -1,0 +1,48 @@
+#Importar Dataset
+df=read.csv('Position_Salaries.csv')
+#filtrado de datasets (filas, colu)
+df=df[,2:3]
+
+#Ajustar Modelo de Regresión Lineal con el Dataset
+
+Lin_reg = lm(formula = Salary ~ .,
+             data = df)
+
+#Ajustar Modelo de Regrsión Polinómica con el Dataset
+df$Level2=df$Level ^ 2
+df$Level3=df$Level ^ 3
+df$Level4=df$Level ^ 4
+Poly_reg = lm(formula = Salary ~ .,
+             data = df)
+#visualizacion modelo lineal
+library(ggplot2)
+ggplot()+ 
+  geom_point(aes(x=df$Level, y=df$Salary),
+             color="red")+
+  geom_line(aes(x=df$Level , y=predict(Lin_reg, newdata=df)),
+            color="blue")+
+  ggtitle("Predicción Lineal del Sueldo")+
+  xlab("Nivel del Empleado")+
+  ylab("Sueldo (USD)")
+#visualizacion modelo polinomico
+#library(ggplot2)
+x_grid=seq(min(df$Level),max(df$Level),0.1)
+ggplot()+ 
+  geom_point(aes(x=df$Level, y=df$Salary),
+             color="red")+
+  geom_line(aes(x=x_grid , y=predict(Poly_reg, newdata=data.frame(Level=x_grid,
+                                                                  Level2=x_grid ^ 2,
+                                                                  Level3=x_grid ^ 3,
+                                                                  Level4=x_grid ^ 4))),
+            color="blue")+
+  ggtitle("Predicción Polinomica del Sueldo")+
+  xlab("Nivel del Empleado")+
+  ylab("Sueldo (USD)")
+
+#prediccion de nuevos resultados con Regresion Lineal
+y_pred_lm=predict(Lin_reg, newdata = data.frame(Level=6.5))
+#prediccion de nuevos resultados con Regresión Polinómica
+y_pred_pm=predict(Poly_reg, newdata = data.frame(Level=6.5,
+                                              Level2=6.5^2,
+                                              Level3=6.5^3,
+                                              Level4=6.5^4))
